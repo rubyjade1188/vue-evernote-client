@@ -1,5 +1,6 @@
 <template>
   <div id="sidebar">
+    <Avatar />
     <div class="icons">
       <router-link to="/note/1" title="笔记"
         ><i class="iconfont icon-note"></i
@@ -18,7 +19,10 @@
 </template>
 
 <script>
-export default {};
+import Avatar from "./Avatar.vue";
+export default {
+  components: { Avatar }
+};
 </script>
 
 <style scoped>
