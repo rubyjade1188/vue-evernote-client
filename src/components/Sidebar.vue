@@ -12,8 +12,8 @@
         ><i class="iconfont icon-trash"></i
       ></router-link>
     </div>
-    <div class="logout" @click="toLogout">
-      <i class="iconfont icon-logout"></i>
+    <div class="logout">
+      <i class="iconfont icon-logout" @click="toLogout"></i>
     </div>
   </div>
 </template>
@@ -21,7 +21,12 @@
 <script>
 import Avatar from "./Avatar.vue";
 export default {
-  components: { Avatar }
+  components: { Avatar },
+  methods: {
+    toLogout() {
+      console.log("logout");
+    }
+  }
 };
 </script>
 
