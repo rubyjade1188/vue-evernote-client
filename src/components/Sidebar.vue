@@ -34,6 +34,7 @@ export default {
 
       // 封装接口请求之后
       Auth.logout().then(data => {
+        this.$router.push({ path: "/login" });
         console.log(data);
       });
     }

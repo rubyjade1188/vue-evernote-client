@@ -68,7 +68,7 @@ export default {
         username: "",
         password: "",
         hint: "请输入用户名和密码",
-        isError: true
+        isError: false
       },
       register: {
         username: "",
@@ -101,8 +101,6 @@ export default {
         this.register.hint = res2.hint;
         return;
       }
-      this.register.isError = false;
-      this.register.hint = "";
       console.log(
         "开始注册, 用户名是：",
         this.register.username,
@@ -121,9 +119,20 @@ export default {
       Auth.register({
         username: this.register.username,
         password: this.register.password
-      }).then(data => {
-        console.log(data);
-      });
+      })
+        .then(data => {
+          this.register.isError = false;
+          this.register.hint = "";
+          // 实现页面跳转
+          this.$router.push({ path: "/notebooks" });
+          // 希望后续弹窗可以用组件库更新
+          alert("恭喜，注册成功🎉");
+          console.log(data);
+        })
+        .catch(data => {
+          this.register.isError = true;
+          this.register.hint = data.msg;
+        });
     },
     clickLogin() {
       console.log("login...");
@@ -140,8 +149,6 @@ export default {
         this.login.hint = res2.hint;
         return;
       }
-      this.login.isError = false;
-      this.login.hint = "";
       console.log(
         `start login..., username: ${this.login.username}, password: ${this.login.password}`
       );
@@ -157,9 +164,19 @@ export default {
       Auth.login({
         username: this.login.username,
         password: this.login.password
-      }).then(data => {
-        console.log(data);
-      });
+      })
+        .then(data => {
+          this.login.isError = false;
+          this.login.hint = "";
+          // 实现页面跳转
+          this.$router.push({ path: "/notebooks" });
+          console.log("start redirect...");
+        })
+        .catch(data => {
+          console.log(data);
+          this.login.isError = true;
+          this.login.hint = data.msg;
+        });
     },
     validateUsername(username) {
       // 用户名可能包含中文，大小写字母，和数字
@@ -229,11 +246,11 @@ export default {
     padding: 10px 20px;
     font-weight: normal;
     font-size: 16px;
-    border-top: 1px solid rosybrown;
+    border-top: 1px solid #eee;
     cursor: pointer;
 
     &:nth-of-type(2) {
-      border-bottom: 1px solid rosybrown;
+      border-bottom: 1px solid #eee;
     }
   }
 
