@@ -45,22 +45,16 @@
 </template>
 
 <script>
-import request from "@/helpers/request";
-
-// request("/auth/login", "POST", { username: "hunger", password: "123456" }).then(
-//   data => {
-//     console.log(data);
-//   }
-// );
-
-// import Auth from "@/apis/auth";
-
-// Auth.getInfo().then(data => {
+// 一开始判断是否登陆，接口可以返回isLogin状态
+// import request from "@/helpers/request";
+// request("/auth").then(data => {
 //   console.log(data);
 // });
 
-// 一开始判断是否登陆，接口可以返回isLogin状态
-request("/auth").then(data => {
+// 封装后可以改成以下样子
+import Auth from "@/apis/auth";
+
+Auth.getInfo().then(data => {
   console.log(data);
 });
 
@@ -71,8 +65,8 @@ export default {
       showRegister: false,
       showLogin: true,
       login: {
-        username: "hunger",
-        password: "123",
+        username: "",
+        password: "",
         hint: "请输入用户名和密码",
         isError: true
       },
@@ -115,7 +109,16 @@ export default {
         " 密码是：",
         this.register.password
       );
-      request("/auth/register", "POST", {
+      // 利用封装axios的request发送请求
+      // request("/auth/register", "POST", {
+      //   username: this.register.username,
+      //   password: this.register.password
+      // }).then(data => {
+      //   console.log(data);
+      // });
+
+      // 封装接口请求之后
+      Auth.register({
         username: this.register.username,
         password: this.register.password
       }).then(data => {
@@ -143,7 +146,15 @@ export default {
         `start login..., username: ${this.login.username}, password: ${this.login.password}`
       );
       // 利用封装axios的request发送请求
-      request("auth/login", "POST", {
+      // request("auth/login", "POST", {
+      //   username: this.login.username,
+      //   password: this.login.password
+      // }).then(data => {
+      //   console.log(data);
+      // });
+
+      // 封装接口请求之后
+      Auth.login({
         username: this.login.username,
         password: this.login.password
       }).then(data => {

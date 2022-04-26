@@ -20,14 +20,20 @@
 
 <script>
 import Avatar from "./Avatar.vue";
-import request from "@/helpers/request";
+import Auth from "@/apis/auth";
 
 export default {
   components: { Avatar },
   methods: {
     toLogout() {
       console.log("logout");
-      request("/auth/logout").then(data => {
+      // 二次封装axios
+      // request("/auth/logout").then(data => {
+      //   console.log(data);
+      // });
+
+      // 封装接口请求之后
+      Auth.logout().then(data => {
         console.log(data);
       });
     }
