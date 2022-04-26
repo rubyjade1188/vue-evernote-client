@@ -53,6 +53,7 @@
 
 // 封装后可以改成以下样子
 import Auth from "@/apis/auth";
+import eventBus from "@/helpers/eventBus";
 
 Auth.getInfo().then(data => {
   console.log(data);
@@ -123,6 +124,7 @@ export default {
         .then(data => {
           this.register.isError = false;
           this.register.hint = "";
+          eventBus.$emit("userInfo", { username: this.register.username });
           // 实现页面跳转
           this.$router.push({ path: "/notebooks" });
           // 希望后续弹窗可以用组件库更新
@@ -168,6 +170,7 @@ export default {
         .then(data => {
           this.login.isError = false;
           this.login.hint = "";
+          eventBus.$emit("userInfo", { username: this.login.username });
           // 实现页面跳转
           this.$router.push({ path: "/notebooks" });
           console.log("start redirect...");

@@ -1,16 +1,32 @@
 <template>
-  <span :title="user.username">{{ initial }}</span>
+  <span :title="username">{{ initial }}</span>
 </template>
 
 <script>
+import Auth from "@/apis/auth";
+import eventBus from "@/helpers/eventBus";
+
 export default {
   data() {
     return {
-      user: {
-        username: "hunger"
-      },
-      initial: "H"
+      username: "未登录"
     };
+  },
+  created() {
+    eventBus.$on("userInfo", data => {
+      this.username = data.username;
+    });
+    Auth.getInfo().then(res => {
+      console.log(res);
+      if (res.isLogin) {
+        this.username = res.data.username;
+      }
+    });
+  },
+  computed: {
+    initial() {
+      return this.username.charAt(0);
+    }
   }
 };
 </script>

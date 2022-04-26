@@ -21,6 +21,7 @@
 <script>
 import Avatar from "./Avatar.vue";
 import Auth from "@/apis/auth";
+import eventBus from "@/helpers/eventBus";
 
 export default {
   components: { Avatar },
@@ -32,6 +33,7 @@ export default {
       //   console.log(data);
       // });
 
+      eventBus.$emit("userInfo", { username: "未登录" });
       // 封装接口请求之后
       Auth.logout().then(data => {
         this.$router.push({ path: "/login" });
