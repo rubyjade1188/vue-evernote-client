@@ -59,6 +59,7 @@ import request from "@/helpers/request";
 //   console.log(data);
 // });
 
+// 一开始判断是否登陆，接口可以返回isLogin状态
 request("/auth").then(data => {
   console.log(data);
 });
@@ -114,9 +115,40 @@ export default {
         " 密码是：",
         this.register.password
       );
+      request("/auth/register", "POST", {
+        username: this.register.username,
+        password: this.register.password
+      }).then(data => {
+        console.log(data);
+      });
     },
     clickLogin() {
       console.log("login...");
+      // 输入判断
+      let res1 = this.validateUsername(this.login.username);
+      if (!res1.isValid) {
+        this.login.isError = true;
+        this.login.hint = res1.hint;
+        return;
+      }
+      let res2 = this.validatePassword(this.login.password);
+      if (!res2.isValid) {
+        this.login.isError = true;
+        this.login.hint = res2.hint;
+        return;
+      }
+      this.login.isError = false;
+      this.login.hint = "";
+      console.log(
+        `start login..., username: ${this.login.username}, password: ${this.login.password}`
+      );
+      // 利用封装axios的request发送请求
+      request("auth/login", "POST", {
+        username: this.login.username,
+        password: this.login.password
+      }).then(data => {
+        console.log(data);
+      });
     },
     validateUsername(username) {
       // 用户名可能包含中文，大小写字母，和数字
@@ -126,10 +158,14 @@ export default {
       };
     },
     validatePassword(password) {
+      // return {
+      //   isValid: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^]{6,16}$/.test(password),
+      //   hint:
+      //     "密码必须是6～16个字符，至少1个大写字母，1个小写字母和1个数字，其他可以是任意字符"
+      // };
       return {
-        isValid: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^]{6,16}$/.test(password),
-        hint:
-          "密码必须是6～16个字符，至少1个大写字母，1个小写字母和1个数字，其他可以是任意字符"
+        isValid: /^.{6,16}$/.test(password),
+        hint: "密码长度为6～16个字符"
       };
     }
   }

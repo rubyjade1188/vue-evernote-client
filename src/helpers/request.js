@@ -5,9 +5,9 @@ console.log(baseURLConfig);
 
 axios.defaults.headers.post["Content-Type"] =
   "application/x-www-form-urlencoded";
-axios.defaults.baseURL = baseURLConfig.baseURL;
 // 表示是否使用跨域请求
 axios.defaults.withCredentials = true;
+axios.defaults.baseURL = baseURLConfig.baseURL;
 
 export default function request(url, type = "GET", data = {}) {
   return new Promise((resolve, reject) => {
