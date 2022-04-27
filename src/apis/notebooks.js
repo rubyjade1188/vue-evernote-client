@@ -9,6 +9,20 @@ const URL = {
 
 export default {
   getAllBooks() {
+    return new Promise((resolve, reject) => {
+      request(URL.GET)
+        .then(res => {
+          // 排序
+          res.data = res.data.sort((notebook1, notebook2) =>
+            notebook1.updatedAt < notebook2.updatedAt ? 1 : -1
+          );
+          resolve(res);
+        })
+        .catch(err => {
+          reject(err);
+        });
+    });
+
     return request(URL.GET);
   },
   // es6设置默认参数的写法
