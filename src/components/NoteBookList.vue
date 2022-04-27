@@ -24,7 +24,7 @@
               <span class="action" @click.stop.prevent="deleteNoteBook(book)"
                 >删除</span
               >
-              <span class="date">{{ book.createdAt }}</span>
+              <span class="date">{{ book.friendlyUpdatedAt }}</span>
             </div>
           </router-link>
         </div>
@@ -36,8 +36,9 @@
 <script>
 import Auth from "@/apis/auth";
 import Notebooks from "@/apis/notebooks";
+import { friendlyDate } from "@/helpers/util";
 
-window.Notebooks = Notebooks;
+// window.Notebooks = Notebooks;
 
 export default {
   name: "NoteBookList",
@@ -67,6 +68,7 @@ export default {
       Notebooks.addBook({ title }).then(res => {
         console.log(res);
         alert(res.msg);
+        res.data.friendlyUpdatedAt = friendlyDate(res.data.updatedAt);
         this.notebooks.unshift(res.data);
       });
     },
@@ -81,6 +83,8 @@ export default {
         // 那么直接在前端修改
         // 即使再刷新，得到的是一致的数据（修改好的），逻辑自洽
         notebook.title = title;
+        // console.log("test", notebook.friendlyUpdatedAt);
+        notebook.friendlyUpdatedAt = friendlyDate(Date.now());
 
         // 因为我们是按照updatedAt排序，所以edit后的数组也要变为第一个
         this.notebooks.splice(this.notebooks.indexOf(notebook), 1);

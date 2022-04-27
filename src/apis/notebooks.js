@@ -1,4 +1,5 @@
 import request from "@/helpers/request";
+import { friendlyDate } from "@/helpers/util";
 
 const URL = {
   GET: "/notebooks",
@@ -16,6 +17,9 @@ export default {
           res.data = res.data.sort((notebook1, notebook2) =>
             notebook1.updatedAt < notebook2.updatedAt ? 1 : -1
           );
+          res.data.forEach(ele => {
+            ele.friendlyUpdatedAt = friendlyDate(ele.updatedAt);
+          });
           resolve(res);
         })
         .catch(err => {
