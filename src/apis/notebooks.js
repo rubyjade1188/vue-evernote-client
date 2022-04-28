@@ -26,8 +26,6 @@ export default {
           reject(err);
         });
     });
-
-    return request(URL.GET);
   },
   // es6设置默认参数的写法
   updateBook(notebookId, { title = "" } = { title: "" }) {
