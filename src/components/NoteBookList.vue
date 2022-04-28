@@ -100,6 +100,7 @@ export default {
       this.$prompt("请输入新标题", "修改笔记本", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
+        inputValue: notebook.title,
         inputPattern: /^.{1,30}$/,
         inputErrorMessage: "标题不能为空，且不超过30个字符"
       })
