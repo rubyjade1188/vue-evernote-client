@@ -36,37 +36,30 @@
 </template>
 
 <script>
+import Notebooks from "@/apis/notebooks";
+import Notes from "@/apis/notes";
+
+window.Notes = Notes;
+
 export default {
   data() {
     return {
-      notebooks: [
-        {
-          id: 1,
-          title: "hello1"
-        },
-        {
-          id: 2,
-          title: "hello2",
-          updatedAtFriendly: "3分钟前"
-        }
-      ],
-      notes: [
-        {
-          id: 11,
-          title: "第1个笔记",
-          updatedAtFriendly: "刚刚"
-        },
-        {
-          id: 12,
-          title: "第2个笔记",
-          updatedAtFriendly: "3分钟前"
-        }
-      ]
+      notebooks: [],
+      notes: []
     };
   },
+  created() {
+    Notebooks.getAllBooks().then(res => {
+      this.notebooks = res.data;
+    });
+  },
   methods: {
-    handleCommand(cmd) {
-      console.log(cmd);
+    handleCommand(notebookId) {
+      if (notebookId !== "trash") {
+        Notes.getNotes({ notebookId }).then(res => {
+          this.notes = res.data;
+        });
+      }
     }
   }
 };
