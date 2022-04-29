@@ -7,7 +7,7 @@
       placement="bottom"
     >
       <span class="el-dropdown-link">
-        我的笔记本1<i class="el-icon-arrow-down el-icon--right"></i>
+        {{ curBook.title }}<i class="el-icon-arrow-down el-icon--right"></i>
       </span>
       <el-dropdown-menu slot="dropdown">
         <el-dropdown-item
@@ -26,7 +26,8 @@
     </div>
     <ul class="notes">
       <li v-for="(note, index) in notes" :key="index">
-        <router-link :to="`/note?noteId=${note.id}`">
+        <!-- es6 字符串模版写法 -->
+        <router-link :to="`/note?noteId=${note.id}&notebookId=${curBook.id}`">
           <span class="date">{{ note.updatedAtFriendly }}</span>
           <span class="title">{{ note.title }}</span>
         </router-link>
@@ -39,19 +40,30 @@
 import Notebooks from "@/apis/notebooks";
 import Notes from "@/apis/notes";
 
-window.Notes = Notes;
-
 export default {
   data() {
     return {
       notebooks: [],
-      notes: []
+      notes: [],
+      curBook: {}
     };
   },
   created() {
-    Notebooks.getAllBooks().then(res => {
-      this.notebooks = res.data;
-    });
+    Notebooks.getAllBooks()
+      .then(res => {
+        this.notebooks = res.data;
+        let val = this.$route.query.notebookId;
+        //   console.log(typeof val);
+        //   this.curBook = this.notebooks.find(item => item.id == val);
+        this.curBook =
+          this.notebooks.find(item => item.id === parseInt(val)) ||
+          this.notebooks[0] ||
+          {};
+        return Notes.getNotes({ notebookId: this.curBook.id });
+      })
+      .then(res => {
+        this.notes = res.data;
+      });
   },
   methods: {
     handleCommand(notebookId) {
@@ -59,6 +71,8 @@ export default {
         Notes.getNotes({ notebookId }).then(res => {
           this.notes = res.data;
         });
+      } else {
+        return this.$router.push({ path: "/trash" });
       }
     }
   }
