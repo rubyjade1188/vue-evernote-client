@@ -68,6 +68,9 @@ export default {
   methods: {
     handleCommand(notebookId) {
       if (notebookId !== "trash") {
+        this.curBook = this.notebooks.find(
+          notebook => notebook.id == notebookId
+        );
         Notes.getNotes({ notebookId }).then(res => {
           this.notes = res.data;
         });
