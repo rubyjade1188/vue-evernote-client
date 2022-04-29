@@ -12,7 +12,7 @@
           <router-link
             v-for="(book, index) in notebooks"
             :key="index"
-            to="/note/1"
+            :to="`/note?notebookId=${book.id}`"
             class="notebook"
           >
             <div>
