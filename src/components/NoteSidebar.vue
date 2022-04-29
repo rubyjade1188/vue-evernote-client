@@ -63,6 +63,7 @@ export default {
       })
       .then(res => {
         this.notes = res.data;
+        this.$emit("update:notes", this.notes);
       });
   },
   methods: {
@@ -73,6 +74,7 @@ export default {
         );
         Notes.getNotes({ notebookId }).then(res => {
           this.notes = res.data;
+          this.$emit("update:notes", this.notes);
         });
       } else {
         return this.$router.push({ path: "/trash" });
