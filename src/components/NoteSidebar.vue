@@ -1,6 +1,6 @@
 <template>
   <div class="note-sidebar">
-    <span class="btn add-note">添加笔记</span>
+    <span class="btn add-note" @click="addNote">添加笔记</span>
     <el-dropdown
       class="notebook-title"
       @command="handleCommand"
@@ -81,6 +81,13 @@ export default {
       } else {
         return this.$router.push({ path: "/trash" });
       }
+    },
+    addNote() {
+      console.log("addNote", this.curBook.id);
+      Notes.addNote({ notebookId: this.curBook.id }).then(res => {
+        this.$message.success("笔记创建成功");
+        this.notes.unshift(res.data);
+      });
     }
   }
 };
