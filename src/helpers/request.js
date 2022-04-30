@@ -30,11 +30,12 @@ export default function request(url, type = "GET", data = {}) {
           resolve(res.data);
         } else {
           console.error(res.data);
+          Message.error(res.data.msg);
           reject(res.data);
         }
       })
       .catch(err => {
-        Message.error(res.data.msg);
+        Message.error("网络异常");
         reject({ msg: "网络异常" });
       });
   });

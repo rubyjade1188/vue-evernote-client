@@ -86,12 +86,6 @@ export default {
               type: "info",
               message: "取消输入"
             });
-          } else {
-            // 当接收到后端返回的err时
-            this.$message({
-              type: "error",
-              message: err.msg
-            });
           }
         });
     },
@@ -134,12 +128,6 @@ export default {
               type: "info",
               message: "取消输入"
             });
-          } else {
-            // 当接收到后端返回的err时
-            this.$message({
-              type: "error",
-              message: err.msg
-            });
           }
         });
     },
@@ -166,11 +154,6 @@ export default {
             this.$message({
               type: "info",
               message: "已取消删除"
-            });
-          } else {
-            this.$message({
-              type: "error",
-              message: res.msg
             });
           }
         });
