@@ -2,33 +2,44 @@
   <div id="note" class="detail">
     <NoteSidebar @update:notes="val => (notes = val)"></NoteSidebar>
     <div class="note-detail">
-      <div class="note-bar">
-        <span>创建日期：{{ curNote.createdAtFriendly }}</span>
-        <span>更新日期：{{ curNote.updatedAtFriendly }}</span>
-        <span>{{ curNote.statusText }}</span>
-        <span class="iconfont icon-delete"></span>
-        <span class="iconfont icon-fullscreen"></span>
-      </div>
-      <div class="note-title">
-        <input type="text" v-model="curNote.title" placeholder="输入标题" />
-      </div>
-      <div class="editor">
-        <textarea
-          v-show="true"
-          v-model="curNote.content"
-          name=""
-          id=""
-          placeholder="输入内容，支持markdown语法"
-        ></textarea>
-        <div class="preview markdown-body" v-show="false"></div>
+      <div class="note-empty" v-show="!curNote.id">请选择笔记</div>
+      <div v-show="curNote.id">
+        <div class="note-bar">
+          <span>创建日期：{{ curNote.createdAtFriendly }}</span>
+          <span>更新日期：{{ curNote.updatedAtFriendly }}</span>
+          <span>{{ curNote.statusText }}</span>
+          <span class="iconfont icon-delete"></span>
+          <span class="iconfont icon-fullscreen"></span>
+        </div>
+        <div class="note-title">
+          <input
+            type="text"
+            v-model="curNote.title"
+            @input="updateNote"
+            placeholder="输入标题"
+          />
+        </div>
+        <div class="editor">
+          <textarea
+            v-show="true"
+            v-model="curNote.content"
+            @input="updateNote"
+            placeholder="输入内容，支持markdown语法"
+          ></textarea>
+          <div class="preview markdown-body" v-show="false"></div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+<script src="https://unpkg.com/lodash@4.17.20/lodash.min.js"></script>
+
 import Auth from "@/apis/auth";
 import NoteSidebar from "@/components/NoteSidebar";
+import eventBus from "@/helpers/eventBus";
+import _ from "lodash";
 
 export default {
   name: "NoteDetail",
@@ -47,6 +58,14 @@ export default {
         this.$router.push({ path: "/login" });
       }
     });
+    eventBus.$once("updated:notes", val => {
+      this.curNote = val.find(note => note.id == this.$route.query.noteId);
+    });
+  },
+  methods: {
+    updateNote() {
+
+    }
   },
   beforeRouteUpdate(to, from, next) {
     console.log("beforeRouteUpdate");

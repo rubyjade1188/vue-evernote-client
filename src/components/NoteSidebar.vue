@@ -39,6 +39,8 @@
 <script>
 import Notebooks from "@/apis/notebooks";
 import Notes from "@/apis/notes";
+import eventBus from "@/helpers/eventBus";
+import _ from "lodash";
 
 export default {
   data() {
@@ -64,6 +66,7 @@ export default {
       .then(res => {
         this.notes = res.data;
         this.$emit("update:notes", this.notes);
+        eventBus.$emit("updated:notes", this.notes);
       });
   },
   methods: {
