@@ -37,16 +37,14 @@
 import Auth from "@/apis/auth";
 import Notebooks from "@/apis/notebooks";
 import { friendlyDate } from "@/helpers/util";
+import { mapState, mapGetters, mapActions } from "vuex";
 
 // window.Notebooks = Notebooks;
 
 export default {
   name: "NoteBookList",
   data() {
-    return {
-      notebooks: [],
-      msg: "笔记本列表"
-    };
+    return {};
   },
   created() {
     Auth.getInfo().then(res => {
@@ -54,9 +52,14 @@ export default {
         this.$router.push({ path: "/login" });
       }
     });
-    Notebooks.getAllBooks().then(res => {
-      this.notebooks = res.data;
-    });
+    // Notebooks.getAllBooks().then(res => {
+    //   this.notebooks = res.data;
+    // });
+    // 上面的异步请求，变成这种
+    this.$store.dispatch("getNotebooks");
+  },
+  computed: {
+    ...mapGetters(["notebooks"])
   },
   methods: {
     createNoteBook() {
