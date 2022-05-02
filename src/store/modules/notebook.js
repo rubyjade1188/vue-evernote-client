@@ -1,4 +1,5 @@
 import Notebook from "@/apis/notebooks";
+import { Message } from "element-ui";
 
 const state = {
   notebooks: []
@@ -32,6 +33,29 @@ const actions = {
   getNotebooks({ commit }) {
     Notebook.getAllBooks().then(res => {
       commit("setNotebooks", { notebooks: res.data });
+    });
+  },
+  addNotebook({ commit }, payload) {
+    Notebook.addBook({ title: payload.title }).then(res => {
+      commit("addNotebook", { notebook: res.data });
+      Message.success(res.msg);
+    });
+  },
+  updateNotebook({ commit }, payload) {
+    Notebook.updateBook(payload.notebookId, {
+      title: payload.title
+    }).then(res => {
+      commit("updateNotebook", {
+        notebookId: payload.notebookId,
+        title: payload.title
+      });
+      Message.success(res.msg);
+    });
+  },
+  deleteNotebook({ commit }, payload) {
+    Notebook.deleteBook(payload.notebookId).then(res => {
+      commit("deleteNotebook", { notebookId: payload.notebookId });
+      Message.success(res.msg);
     });
   }
 };
