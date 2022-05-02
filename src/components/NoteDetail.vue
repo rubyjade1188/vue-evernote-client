@@ -49,6 +49,7 @@ import eventBus from "@/helpers/eventBus";
 import _ from "lodash";
 import Notes from "@/apis/notes";
 import MarkdownIt from "markdown-it";
+import { mapState, mapGetters, mapActions, mapMutations } from "vuex";
 
 let md = new MarkdownIt();
 

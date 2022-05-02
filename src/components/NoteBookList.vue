@@ -56,7 +56,8 @@ export default {
     //   this.notebooks = res.data;
     // });
     // 上面的异步请求，变成这种
-    this.$store.dispatch("getNotebooks");
+    // this.$store.dispatch("getNotebooks");
+    this.getNotebooks();
   },
   computed: {
     ...mapGetters(["notebooks"])

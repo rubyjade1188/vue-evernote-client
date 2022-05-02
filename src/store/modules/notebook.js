@@ -1,12 +1,21 @@
 import Notebook from "@/apis/notebooks";
 import { Message } from "element-ui";
+import { satisfies } from "semver";
 
 const state = {
-  notebooks: []
+  notebooks: null,
+  curBookId: null
 };
 
 const getters = {
-  notebooks: state => state.notebooks || []
+  notebooks: state => state.notebooks || [],
+  curBook: state => {
+    if (!Array.isArray(state.notebooks)) return {};
+    if (!state.curBookId) return state.notebooks[0];
+    return (
+      state.notebooks.find(notebook => notebook.id == state.curBookId) || {}
+    );
+  }
 };
 
 const mutations = {
@@ -18,31 +27,33 @@ const mutations = {
   },
   updateNotebook(state, payload) {
     let notebook =
-      state.notebooks.find(notebook => notebook.id === payload.notebookId) ||
-      {};
+      state.notebooks.find(notebook => notebook.id == payload.notebookId) || {};
     notebook.title = payload.title;
   },
   deleteNotebook(state, payload) {
     state.notebooks = state.notebooks.filter(
-      book => book.id !== payload.notebookId
+      book => book.id != payload.notebookId
     );
+  },
+  setCurBookId(state, payload) {
+    state.curBookId = payload.curBookId;
   }
 };
 
 const actions = {
   getNotebooks({ commit }) {
-    Notebook.getAllBooks().then(res => {
+    return Notebook.getAllBooks().then(res => {
       commit("setNotebooks", { notebooks: res.data });
     });
   },
   addNotebook({ commit }, payload) {
-    Notebook.addBook({ title: payload.title }).then(res => {
+    return Notebook.addBook({ title: payload.title }).then(res => {
       commit("addNotebook", { notebook: res.data });
       Message.success(res.msg);
     });
   },
   updateNotebook({ commit }, payload) {
-    Notebook.updateBook(payload.notebookId, {
+    return Notebook.updateBook(payload.notebookId, {
       title: payload.title
     }).then(res => {
       commit("updateNotebook", {
@@ -53,7 +64,7 @@ const actions = {
     });
   },
   deleteNotebook({ commit }, payload) {
-    Notebook.deleteBook(payload.notebookId).then(res => {
+    return Notebook.deleteBook(payload.notebookId).then(res => {
       commit("deleteNotebook", { notebookId: payload.notebookId });
       Message.success(res.msg);
     });
