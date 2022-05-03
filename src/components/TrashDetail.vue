@@ -41,6 +41,7 @@
 import Auth from "@/apis/auth";
 import MarkdownIt from "markdown-it";
 import Trash from "@/apis/trash";
+import { mapGetters, mapActions, mapMutations } from "vuex";
 
 window.Trash = Trash;
 
@@ -51,51 +52,43 @@ export default {
   data() {
     return {
       msg: "回收站笔记详情页",
-      curTrashNote: {
-        id: 3,
-        title: "我的笔记",
-        content: "## hello world",
-        createdAtFriendly: "2小时前",
-        updatedAtFriendly: "刚刚"
-      },
-      belongTo: "我的笔记本",
-      trashNotes: [
-        {
-          id: 2,
-          title: "我的笔记",
-          content: "## hello world",
-          createdAtFriendly: "2小时前",
-          updatedAtFriendly: "刚刚"
-        },
-        {
-          id: 3,
-          title: "我的笔记",
-          content: "## hello world",
-          createdAtFriendly: "2小时前",
-          updatedAtFriendly: "刚刚"
-        }
-      ]
+      belongTo: "我的笔记本"
     };
   },
   created() {
-    Auth.getInfo().then(res => {
-      if (!res.isLogin) {
-        this.$router.push({ path: "/login" });
-      }
+    this.checkLogin({ path: "/login" });
+    this.getTrashNotes().then(() => {
+      this.setCurTrashNoteId({ curTrashNoteId: this.$route.query.noteId });
     });
   },
   computed: {
+    ...mapGetters(["trashNotes", "curTrashNote"]),
     compiledMarkdown() {
       return md.render(this.curTrashNote.content || "");
     }
   },
   methods: {
+    ...mapMutations(["setCurTrashNoteId"]),
+    ...mapActions([
+      "checkLogin",
+      "getTrashNotes",
+      "deleteTrashNote",
+      "revertTrashNote"
+    ]),
     onRevert() {
+      his.revertTrashNote({ noteId: this.curTrashNote.id });
       console.log("revert!!!");
     },
     onDelete() {
+      this.deleteTrashNote({ noteId: this.curTrashNote.id });
       console.log("delete!!!");
     }
+  },
+  beforeRouteUpdate(to, from, next) {
+    console.log("trash beforeRouteUpdate");
+    // this.curNote = this.notes.find(note => note.id == to.query.noteId) || {};
+    this.setCurTrashNoteId({ curTrashNoteId: to.query.noteId });
+    next();
   }
 };
 </script>
