@@ -46,14 +46,20 @@ export default {
   created() {
     this.getNotebooks()
       .then(() => {
-        this.$store.commit("setCurBookId", {
-          curBookId: this.$route.query.notebookId
-        });
-        return this.getNotes({ notebookId: this.curBook.id });
+        this.setCurBookId({ curBookId: this.$route.query.notebookId });
+        if (this.curBook.id)
+          return this.getNotes({ notebookId: this.curBook.id });
       })
       .then(() => {
         this.$store.commit("setCurNoteId", {
           curNoteId: this.$route.query.noteId
+        });
+        this.$router.replace({
+          path: "/note",
+          query: {
+            noteId: this.curNote.id,
+            notebookId: this.curBook.id
+          }
         });
       });
     // Notebooks.getAllBooks()
@@ -75,10 +81,10 @@ export default {
     //   });
   },
   computed: {
-    ...mapGetters(["notebooks", "notes", "curBook"])
+    ...mapGetters(["notebooks", "notes", "curBook", "curNote"])
   },
   methods: {
-    ...mapMutations(["setCurBookId", "setCurNote"]),
+    ...mapMutations(["setCurBookId", "setCurNoteId"]),
     ...mapActions(["getNotebooks", "getNotes", "addNote"]),
     handleCommand(notebookId) {
       if (notebookId !== "trash") {
@@ -93,7 +99,16 @@ export default {
         //   this.$emit("update:notes", this.notes);
         // });
         // 因为上面set过一遍了
-        this.getNotes({ notebookId: this.curBook.id });
+        this.getNotes({ notebookId: this.curBook.id }).then(() => {
+          this.$store.commit("setCurNoteId", {});
+          this.$router.replace({
+            path: "/note",
+            query: {
+              noteId: this.curNote.id,
+              notebookId: this.curBook.id
+            }
+          });
+        });
       } else {
         return this.$router.push({ path: "/trash" });
       }

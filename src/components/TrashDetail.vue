@@ -77,7 +77,7 @@ export default {
       "getNotebooks"
     ]),
     onRevert() {
-      his.revertTrashNote({ noteId: this.curTrashNote.id });
+      this.revertTrashNote({ noteId: this.curTrashNote.id });
       console.log("revert!!!");
     },
     onDelete() {
