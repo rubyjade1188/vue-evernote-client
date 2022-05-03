@@ -47,12 +47,18 @@ export default {
     return {};
   },
   created() {
-    this.getNotebooks().then(() => {
-      this.$store.commit("setCurBookId", {
-        curBookId: this.$route.query.notebookId
+    this.getNotebooks()
+      .then(() => {
+        this.$store.commit("setCurBookId", {
+          curBookId: this.$route.query.notebookId
+        });
+        return this.getNotes({ notebookId: this.curBook.id });
+      })
+      .then(() => {
+        this.$store.commit("setCurNoteId", {
+          curNoteId: this.$route.query.noteId
+        });
       });
-      this.getNotes({ notebookId: this.curBook.id });
-    });
     // Notebooks.getAllBooks()
     //   .then(res => {
     //     this.notebooks = res.data;

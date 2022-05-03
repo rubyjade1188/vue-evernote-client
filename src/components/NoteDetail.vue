@@ -8,7 +8,7 @@
           <span>更新日期：{{ curNote.updatedAtFriendly }}</span>
           <span>创建日期：{{ curNote.createdAtFriendly }}</span>
           <span>{{ statusText }}</span>
-          <span class="iconfont icon-delete" @click="deleteNote"></span>
+          <span class="iconfont icon-delete" @click="onDeleteNote"></span>
           <span
             class="iconfont icon-fullscreen"
             @click="isShowPreview = !isShowPreview"
@@ -18,7 +18,7 @@
           <input
             type="text"
             v-model="curNote.title"
-            @input="updateNote"
+            @input="editNote"
             @keydown="statusText = '正在输入...'"
             placeholder="输入标题"
           />
@@ -27,7 +27,7 @@
           <textarea
             v-show="!isShowPreview"
             v-model="curNote.content"
-            @input="updateNote"
+            @input="editNote"
             @keydown="statusText = '正在输入...'"
             placeholder="输入内容，支持markdown语法"
           ></textarea>
@@ -45,11 +45,9 @@
 <script>
 import Auth from "@/apis/auth";
 import NoteSidebar from "@/components/NoteSidebar";
-import eventBus from "@/helpers/eventBus";
 import _ from "lodash";
-import Notes from "@/apis/notes";
 import MarkdownIt from "markdown-it";
-import { mapState, mapGetters, mapActions, mapMutations } from "vuex";
+import { mapGetters, mapActions, mapMutations } from "vuex";
 
 let md = new MarkdownIt();
 
@@ -60,8 +58,6 @@ export default {
   },
   data() {
     return {
-      curNote: {},
-      notes: [],
       statusText: "笔记未改动",
       isShowPreview: false
     };
@@ -72,41 +68,44 @@ export default {
         this.$router.push({ path: "/login" });
       }
     });
-    eventBus.$on("update:notes", val => {
-      this.curNote =
-        val.find(note => note.id == this.$route.query.noteId) || {};
-    });
+    // eventBus.$on("update:notes", val => {
+    //   this.curNote =
+    //     val.find(note => note.id == this.$route.query.noteId) || {};
+    // });
   },
   computed: {
+    ...mapGetters(["notes", "curNote"]),
     previewContent() {
       // console.log(this.curNote.content || "");
       return md.render(this.curNote.content || "");
     }
   },
   methods: {
-    updateNote: _.debounce(function() {
-      Notes.updateNote(
-        { noteId: this.curNote.id },
-        { title: this.curNote.title, content: this.curNote.content }
-      )
-        .then(data => {
+    ...mapMutations(["setCurNoteId"]),
+    ...mapActions(["updateNote", "deleteNote"]),
+    editNote: _.debounce(function() {
+      this.updateNote({
+        noteId: this.curNote.id,
+        title: this.curNote.title,
+        content: this.curNote.content
+      })
+        .then(() => {
           this.statusText = "已保存";
         })
-        .catch(data => {
+        .catch(() => {
           this.statusText = "保存出错";
         });
     }, 300),
-    deleteNote() {
-      Notes.deleteNote({ noteId: this.curNote.id }).then(data => {
-        this.$message.success(data.msg);
-        this.notes.splice(this.notes.indexOf(this.curNote), 1);
+    onDeleteNote() {
+      this.deleteNote({ noteId: this.curNote.id }).then(() => {
         this.$router.replace({ path: "/note" });
       });
     }
   },
   beforeRouteUpdate(to, from, next) {
     console.log("beforeRouteUpdate");
-    this.curNote = this.notes.find(note => note.id == to.query.noteId) || {};
+    // this.curNote = this.notes.find(note => note.id == to.query.noteId) || {};
+    this.setCurNoteId({ curNoteId: to.query.noteId });
     next();
     // 在当前路由改变，但是该组件被复用时调用
     // 举例来说，对于一个带有动态参数的路径 `/users/:id`，在 `/users/1` 和 `/users/2` 之间跳转的时候，

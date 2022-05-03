@@ -2,12 +2,17 @@ import Note from "@/apis/notes";
 import { Message } from "element-ui";
 
 const state = {
-  notes: [],
-  curNote: {}
+  notes: null,
+  curNoteId: null
 };
 
 const getters = {
-  notes: state => state.notes || []
+  notes: state => state.notes || [],
+  curNote: state => {
+    if (!Array.isArray(state.notes)) return {};
+    if (!state.curNoteId) return state.notes[0];
+    return state.notes.find(note => note.id == state.curNoteId) || {};
+  }
 };
 
 const mutations = {
@@ -24,17 +29,20 @@ const mutations = {
   },
   deleteNote(state, payload) {
     state.notes = state.notes.filter(note => note.id !== payload.noteId);
+  },
+  setCurNoteId(state, payload) {
+    state.curNoteId = payload.curNoteId;
   }
 };
 
 const actions = {
   getNotes({ commit }, payload) {
-    Note.getNotes({ notebookId: payload.notebookId }).then(res => {
+    return Note.getNotes({ notebookId: payload.notebookId }).then(res => {
       commit("setNote", { notes: res.data });
     });
   },
   addNote({ commit }, payload) {
-    Note.addNote(
+    return Note.addNote(
       { notebookId: payload.notebookId },
       { title: payload.title, content: payload.content }
     ).then(res => {
@@ -43,7 +51,7 @@ const actions = {
     });
   },
   updateNote({ commit }, payload) {
-    Note.updateNote(
+    return Note.updateNote(
       { noteId: payload.noteId },
       { title: payload.title, content: payload.content }
     ).then(res => {
@@ -52,11 +60,12 @@ const actions = {
         title: payload.title,
         content: payload.content
       });
-      Message.success(res.msg);
+      // 取消弹窗，不然一直输入一直弹
+      //Message.success(res.msg);
     });
   },
   deleteNote({ commit }, payload) {
-    Note.deleteNote({ noteId: payload.noteId }).then(res => {
+    return Note.deleteNote({ noteId: payload.noteId }).then(res => {
       commit("deleteNote", { noteId: payload.noteId });
       Message.success(res.msg);
     });
