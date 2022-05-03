@@ -51,18 +51,18 @@ export default {
   name: "TrashDetail",
   data() {
     return {
-      msg: "回收站笔记详情页",
-      belongTo: "我的笔记本"
+      msg: "回收站笔记详情页"
     };
   },
   created() {
     this.checkLogin({ path: "/login" });
+    this.getNotebooks();
     this.getTrashNotes().then(() => {
       this.setCurTrashNoteId({ curTrashNoteId: this.$route.query.noteId });
     });
   },
   computed: {
-    ...mapGetters(["trashNotes", "curTrashNote"]),
+    ...mapGetters(["trashNotes", "curTrashNote", "belongTo"]),
     compiledMarkdown() {
       return md.render(this.curTrashNote.content || "");
     }
@@ -73,7 +73,8 @@ export default {
       "checkLogin",
       "getTrashNotes",
       "deleteTrashNote",
-      "revertTrashNote"
+      "revertTrashNote",
+      "getNotebooks"
     ]),
     onRevert() {
       his.revertTrashNote({ noteId: this.curTrashNote.id });
