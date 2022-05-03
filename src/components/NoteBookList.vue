@@ -34,9 +34,6 @@
 </template>
 
 <script>
-import Auth from "@/apis/auth";
-import Notebooks from "@/apis/notebooks";
-import { friendlyDate } from "@/helpers/util";
 import { mapState, mapGetters, mapActions } from "vuex";
 
 // window.Notebooks = Notebooks;
@@ -47,11 +44,7 @@ export default {
     return {};
   },
   created() {
-    Auth.getInfo().then(res => {
-      if (!res.isLogin) {
-        this.$router.push({ path: "/login" });
-      }
-    });
+    this.checkLogin({ path: "/login" });
     // Notebooks.getAllBooks().then(res => {
     //   this.notebooks = res.data;
     // });
@@ -67,7 +60,8 @@ export default {
       "getNotebooks",
       "addNotebook",
       "updateNotebook",
-      "deleteNotebook"
+      "deleteNotebook",
+      "checkLogin"
     ]),
     createNoteBook() {
       this.$prompt("请输入笔记本标题", "新建笔记本", {

@@ -52,12 +52,7 @@
 // });
 
 // 封装后可以改成以下样子
-import Auth from "@/apis/auth";
-import eventBus from "@/helpers/eventBus";
-
-Auth.getInfo().then(data => {
-  console.log(data);
-});
+import { mapGetters, mapActions } from "vuex";
 
 export default {
   name: "Login",
@@ -80,6 +75,10 @@ export default {
     };
   },
   methods: {
+    ...mapActions({
+      loginUser: "login",
+      registerUser: "register"
+    }),
     toRegister() {
       this.showRegister = true;
       this.showLogin = false;
@@ -102,12 +101,12 @@ export default {
         this.register.hint = res2.hint;
         return;
       }
-      console.log(
-        "开始注册, 用户名是：",
-        this.register.username,
-        " 密码是：",
-        this.register.password
-      );
+      // console.log(
+      //   "开始注册, 用户名是：",
+      //   this.register.username,
+      //   " 密码是：",
+      //   this.register.password
+      // );
       // 利用封装axios的request发送请求
       // request("/auth/register", "POST", {
       //   username: this.register.username,
@@ -117,19 +116,14 @@ export default {
       // });
 
       // 封装接口请求之后
-      Auth.register({
+      this.registerUser({
         username: this.register.username,
         password: this.register.password
       })
-        .then(data => {
+        .then(() => {
           this.register.isError = false;
           this.register.hint = "";
-          eventBus.$emit("userInfo", { username: this.register.username });
-          // 实现页面跳转
           this.$router.push({ path: "/notebooks" });
-          // 希望后续弹窗可以用组件库更新
-          alert("恭喜，注册成功🎉");
-          console.log(data);
         })
         .catch(data => {
           this.register.isError = true;
@@ -163,20 +157,16 @@ export default {
       // });
 
       // 封装接口请求之后
-      Auth.login({
+      this.loginUser({
         username: this.login.username,
         password: this.login.password
       })
-        .then(data => {
+        .then(() => {
           this.login.isError = false;
           this.login.hint = "";
-          eventBus.$emit("userInfo", { username: this.login.username });
-          // 实现页面跳转
-          this.$router.push({ path: "/notebooks" });
-          console.log("start redirect...");
+          this.$router.push({ path: "notebooks" });
         })
         .catch(data => {
-          console.log(data);
           this.login.isError = true;
           this.login.hint = data.msg;
         });

@@ -1,6 +1,5 @@
 import Notebook from "@/apis/notebooks";
 import { Message } from "element-ui";
-import { satisfies } from "semver";
 
 const state = {
   notebooks: null,
@@ -11,7 +10,7 @@ const getters = {
   notebooks: state => state.notebooks || [],
   curBook: state => {
     if (!Array.isArray(state.notebooks)) return {};
-    if (!state.curBookId) return state.notebooks[0];
+    if (!state.curBookId) return state.notebooks[0] || {};
     return (
       state.notebooks.find(notebook => notebook.id == state.curBookId) || {}
     );

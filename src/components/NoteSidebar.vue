@@ -37,9 +37,6 @@
 </template>
 
 <script>
-import Notebooks from "@/apis/notebooks";
-import Notes from "@/apis/notes";
-import eventBus from "@/helpers/eventBus";
 import { mapState, mapGetters, mapActions, mapMutations } from "vuex";
 
 export default {

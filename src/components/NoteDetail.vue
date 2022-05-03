@@ -43,7 +43,6 @@
 </template>
 
 <script>
-import Auth from "@/apis/auth";
 import NoteSidebar from "@/components/NoteSidebar";
 import _ from "lodash";
 import MarkdownIt from "markdown-it";
@@ -63,11 +62,12 @@ export default {
     };
   },
   created() {
-    Auth.getInfo().then(res => {
-      if (!res.isLogin) {
-        this.$router.push({ path: "/login" });
-      }
-    });
+    this.checkLogin({ path: "/login" });
+    // Auth.getInfo().then(res => {
+    //   if (!res.isLogin) {
+    //     this.$router.push({ path: "/login" });
+    //   }
+    // });
     // eventBus.$on("update:notes", val => {
     //   this.curNote =
     //     val.find(note => note.id == this.$route.query.noteId) || {};
@@ -82,7 +82,7 @@ export default {
   },
   methods: {
     ...mapMutations(["setCurNoteId"]),
-    ...mapActions(["updateNote", "deleteNote"]),
+    ...mapActions(["updateNote", "deleteNote", "checkLogin"]),
     editNote: _.debounce(function() {
       this.updateNote({
         noteId: this.curNote.id,

@@ -3,30 +3,20 @@
 </template>
 
 <script>
-import Auth from "@/apis/auth";
-import eventBus from "@/helpers/eventBus";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
   data() {
-    return {
-      username: "未登录"
-    };
+    return {};
   },
   created() {
-    eventBus.$on("userInfo", data => {
-      this.username = data.username;
-    });
-    Auth.getInfo().then(res => {
-      console.log(res);
-      if (res.isLogin) {
-        this.username = res.data.username;
-      }
-    });
+    this.setUser();
+  },
+  methods: {
+    ...mapActions({ setUser: "checkLogin" })
   },
   computed: {
-    initial() {
-      return this.username.charAt(0);
-    }
+    ...mapGetters(["initial", "username"])
   }
 };
 </script>
