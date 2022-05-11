@@ -13,7 +13,7 @@
       ></router-link>
     </div>
     <div class="logout">
-      <i class="iconfont icon-logout" @click="toLogout"></i>
+      <i class="iconfont icon-logout" @click="logout"></i>
     </div>
   </div>
 </template>
@@ -22,24 +22,12 @@
 import Avatar from "./Avatar.vue";
 import Auth from "@/apis/auth";
 import eventBus from "@/helpers/eventBus";
+import { mapActions } from "vuex";
 
 export default {
   components: { Avatar },
   methods: {
-    toLogout() {
-      console.log("logout");
-      // 二次封装axios
-      // request("/auth/logout").then(data => {
-      //   console.log(data);
-      // });
-
-      eventBus.$emit("userInfo", { username: "未登录" });
-      // 封装接口请求之后
-      Auth.logout().then(data => {
-        this.$router.push({ path: "/login" });
-        console.log(data);
-      });
-    }
+    ...mapActions(["logout"])
   }
 };
 </script>

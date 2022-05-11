@@ -38,6 +38,12 @@ const actions = {
         router.push(payload);
       }
     });
+  },
+  logout({ commit }) {
+    return Auth.logout().then(res => {
+      commit("setUser", { user: null });
+      router.push({ path: "/login" });
+    });
   }
 };
 
